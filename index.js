@@ -39,6 +39,7 @@ async function run() {
         res.send(result);
         
     })
+    
     //brand
     app.get('/cars/:brand', async(req, res)=>{
         
@@ -57,10 +58,25 @@ async function run() {
         const result = await carCollection.findOne(query);
         res.send(result)
     })
-     //order
+    //order get
+
+    app.get('/order', async(req, res)=>{
+        const cursor = orderCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    })
+     //order post
      app.post('/order', async(req, res)=>{
         const newOrder = req.body;
         const result = await orderCollection.insertOne(newOrder);
+        res.send(result)
+     })
+     //order delete
+
+     app.delete('/order/:id', async(req, res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await orderCollection.deleteOne(query);
         res.send(result)
      })
 
