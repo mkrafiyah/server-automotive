@@ -39,12 +39,15 @@ async function run() {
         
     })
     //experiment
-    // app.get('/cars/brand/Honda', async(req, res)=>{
-    //     const cursor = carCollection.find('Honda');
-    //     const result = await cursor.toArray();
-    //     res.send(result);
+    app.get('/cars/:brand', async(req, res)=>{
         
-    // })
+        const brand_in_param = req.params.brand;
+        console.log(brand_in_param);
+        const result = await carCollection.find({ brand: brand_in_param }).toArray();
+        console.log(result);
+        res.send(result);
+        
+    })
 
     app.post('/cars', async(req, res)=>{
         const newCar = req.body;
