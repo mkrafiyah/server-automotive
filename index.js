@@ -31,6 +31,7 @@ async function run() {
 
 
     const carCollection = client.db('carDB').collection('cars');
+    const orderCollection = client.db('carDB').collection('order');
 
     app.get('/cars', async(req, res)=>{
         const cursor = carCollection.find();
@@ -38,7 +39,7 @@ async function run() {
         res.send(result);
         
     })
-    //experiment
+    //brand
     app.get('/cars/:brand', async(req, res)=>{
         
         const brand_in_param = req.params.brand;
@@ -48,6 +49,20 @@ async function run() {
         res.send(result);
         
     })
+    //id
+    app.get('/carDetail/:id', async(req, res)=>{
+        
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await carCollection.findOne(query);
+        res.send(result)
+    })
+     //order
+     app.post('/order', async(req, res)=>{
+        const newOrder = req.body;
+        const result = await orderCollection.insertOne(newOrder);
+        res.send(result)
+     })
 
     app.post('/cars', async(req, res)=>{
         const newCar = req.body;
