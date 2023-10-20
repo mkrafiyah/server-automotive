@@ -33,58 +33,87 @@ async function run() {
     const carCollection = client.db('carDB').collection('cars');
     const orderCollection = client.db('carDB').collection('order');
 
-    app.get('/cars', async(req, res)=>{
-        const cursor = carCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
-        
+    app.get('/cars', async (req, res) => {
+      const cursor = carCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+
     })
-    
+
     //brand
-    app.get('/cars/:brand', async(req, res)=>{
-        
-        const brand_in_param = req.params.brand;
-        console.log(brand_in_param);
-        const result = await carCollection.find({ brand: brand_in_param }).toArray();
-        console.log(result);
-        res.send(result);
-        
+    app.get('/cars/:brand', async (req, res) => {
+
+      const brand_in_param = req.params.brand;
+      console.log(brand_in_param);
+      const result = await carCollection.find({ brand: brand_in_param }).toArray();
+      console.log(result);
+      res.send(result);
+
     })
     //id
-    app.get('/carDetail/:id', async(req, res)=>{
-        
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)}
-        const result = await carCollection.findOne(query);
-        res.send(result)
+    app.get('/carDetail/:id', async (req, res) => {
+
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await carCollection.findOne(query);
+      res.send(result)
     })
     //order get
 
-    app.get('/order', async(req, res)=>{
-        const cursor = orderCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
+    app.get('/order', async (req, res) => {
+      const cursor = orderCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
     })
-     //order post
-     app.post('/order', async(req, res)=>{
-        const newOrder = req.body;
-        const result = await orderCollection.insertOne(newOrder);
-        res.send(result)
-     })
-     //order delete
+    //order post
+    app.post('/order', async (req, res) => {
+      const newOrder = req.body;
+      const result = await orderCollection.insertOne(newOrder);
+      res.send(result)
+    })
+    //order update
+    app.get('/updateCart/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await carCollection.findOne(query)
+      res.send(result)
+    })
+    //order put
 
-     app.delete('/order/:id', async(req, res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)}
-        const result = await orderCollection.deleteOne(query);
-        res.send(result)
-     })
+    app.put('/updateCart/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedCar = req.body;
+      const car = {
+        $set: {
+          photo: updatedCar.photo,
+          name: updatedCar.name,
+          brand: updatedCar.brand,
+          carType: updatedCar.carType,
+          price: updatedCar.price,
+          description: updatedCar.description,
+          rating: updatedCar.rating
+        }
+      }
+      const result = await carCollection.updateOne(filter, car, options);
+      res.send(result)
 
-    app.post('/cars', async(req, res)=>{
-        const newCar = req.body;
-        console.log(newCar)
-        const result = await carCollection.insertOne(newCar);
-        res.send(result);
+    })
+    //order delete
+
+    app.delete('/order/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await orderCollection.deleteOne(query);
+      res.send(result)
+    })
+
+    app.post('/cars', async (req, res) => {
+      const newCar = req.body;
+      console.log(newCar)
+      const result = await carCollection.insertOne(newCar);
+      res.send(result);
     })
 
 
@@ -99,10 +128,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req, res)=>{
-    res.send('automotive server running')
+app.get('/', (req, res) => {
+  res.send('automotive server running')
 });
 
-app.listen(port, ()=>{
-    console.log(`server port: ${port}`)
+app.listen(port, () => {
+  console.log(`server port: ${port}`)
 })
